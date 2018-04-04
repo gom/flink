@@ -128,7 +128,7 @@ public class PrometheusReporter implements MetricReporter {
 		for (final Map.Entry<String, String> dimension : group.getAllVariables().entrySet()) {
 			final String key = dimension.getKey();
 			dimensionKeys.add(CHARACTER_FILTER.filterCharacters(key.substring(1, key.length() - 1)));
-			dimensionValues.add(CHARACTER_FILTER.filterCharacters(dimension.getValue()));
+			dimensionValues.add(dimension.getValue());
 		}
 
 		final String scopedMetricName = getScopedName(metricName, group);
@@ -156,7 +156,7 @@ public class PrometheusReporter implements MetricReporter {
 	}
 
 	private static String getScopedName(String metricName, MetricGroup group) {
-		return SCOPE_PREFIX + getLogicalScope(group) + SCOPE_SEPARATOR + CHARACTER_FILTER.filterCharacters(metricName);
+		return SCOPE_PREFIX + CHARACTER_FILTER.filterCharacters(getLogicalScope(group)) + SCOPE_SEPARATOR + CHARACTER_FILTER.filterCharacters(metricName);
 	}
 
 	private static Collector createCollector(Metric metric, List<String> dimensionKeys, List<String> dimensionValues, String scopedMetricName, String helpString) {
