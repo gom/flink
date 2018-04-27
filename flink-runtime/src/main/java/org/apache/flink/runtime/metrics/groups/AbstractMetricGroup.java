@@ -90,9 +90,9 @@ public abstract class AbstractMetricGroup<A extends AbstractMetricGroup<?>> impl
 	 * For example: "host-7.taskmanager-2.window_word_count.my-mapper" */
 	private final String[] scopeStrings;
 
-	/** The logical metrics scope represented by this group, as a concatenated string, lazily computed.
+	/** The map containing the logical metrics scope represented by this group, as a concatenated string, lazily computed.
 	 * For example: "taskmanager.job.task" */
-	private String logicalScopeString;
+	private final Map<Character, String> logicalScopeStrings = new HashMap<>();
 
 	/** The metrics query service scope represented by this group, lazily computed. */
 	protected QueryScopeInfo queryServiceScopeInfo;
@@ -151,14 +151,14 @@ public abstract class AbstractMetricGroup<A extends AbstractMetricGroup<?>> impl
 	 * @return logical scope
 	 */
 	public String getLogicalScope(CharacterFilter filter, char delimiter) {
-		if (logicalScopeString == null) {
+		if (logicalScopeStrings.size() == 0 || !logicalScopeStrings.containsKey(delimiter)) {
 			if (parent == null) {
-				logicalScopeString = getGroupName(filter);
+				logicalScopeStrings.put(delimiter, getGroupName(filter));
 			} else {
-				logicalScopeString = parent.getLogicalScope(filter, delimiter) + delimiter + getGroupName(filter);
+				logicalScopeStrings.put(delimiter, parent.getLogicalScope(filter, delimiter) + delimiter + getGroupName(filter));
 			}
 		}
-		return logicalScopeString;
+		return logicalScopeStrings.get(delimiter);
 	}
 
 	/**
